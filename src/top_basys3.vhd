@@ -119,6 +119,12 @@ begin
         
      thunderbird_inst : thunderbird_fsm
            port map (
+                i_clk => w_clk,
+                i_reset => btnR, 
+                i_left => sw(15),
+                i_right => sw(0),
+                o_lights_L => led(15 downto 13),
+                o_lights_R => led(2 downto 0)
                 
            );
 	
