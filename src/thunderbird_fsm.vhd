@@ -142,7 +142,7 @@ begin
     register_proc : process (i_clk, i_reset)
 begin
     if i_reset = '1' then
-        f_Q <= "10000000";        -- reset state is yellow
+        f_Q <= "10000000";        
     elsif (rising_edge(i_clk)) then
         f_Q <= f_Q_next;    -- next state becomes current state
     end if;
