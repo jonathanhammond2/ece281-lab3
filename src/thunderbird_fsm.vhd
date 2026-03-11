@@ -115,14 +115,16 @@ begin
 
 	-- CONCURRENT STATEMENTS --------------------------------------------------------	
 	--Next state logic
-	f_Q_next(0) <= f_Q(1);
-	f_Q_next(1) <= f_Q(2);
-	f_Q_next(2) <= f_Q(7) and i_left and not i_right;
-	f_Q_next(3) <= f_Q(4);
-	f_Q_next(4) <= f_Q(5);
-	f_Q_next(5) <= f_Q(7) and not i_left and i_right;
+	f_Q_next(0) <= f_Q(1); --L2 -> L3
+	f_Q_next(1) <= f_Q(2); --L1 -> L2
+	f_Q_next(2) <= f_Q(7) and i_left and not i_right; --OFF -> L1
+	
+	f_Q_next(3) <= f_Q(4);                            -- R2 → R3
+	f_Q_next(4) <= f_Q(5);                            -- R1 → R2
+	f_Q_next(5) <= f_Q(7) and i_right and not i_left; -- OFF → R1
+   
 	f_Q_next(6) <= f_Q(7) and i_left and i_right;
-	f_Q_next(7) <= f_Q(7) and not i_left and not i_right;
+	f_Q_next(7) <= (f_Q(7) and not i_left and not i_right) or f_Q(6) or f_Q(3) or f_Q(0);  
     ---------------------------------------------------------------------------------
 	--Output logic
 	o_lights_L(0) <= f_Q(6) or f_Q(0); --LC
@@ -131,13 +133,16 @@ begin
     
     o_lights_R(0) <= f_Q(6) or f_Q(3); --RC
     o_lights_R(1) <= f_Q(6) or f_Q(4) or f_Q(3);
-    o_lights_L(2) <= f_Q(6) or f_Q(5) or f_Q(4) or f_Q(3); --RA
+    o_lights_R(2) <= f_Q(6) or f_Q(5) or f_Q(4) or f_Q(3); --RA
+    
+    
+ 
 	-- PROCESSES --------------------------------------------------------------------
    
     register_proc : process (i_clk, i_reset)
 begin
     if i_reset = '1' then
-        f_Q <= "10";        -- reset state is yellow
+        f_Q <= "10000000";        -- reset state is yellow
     elsif (rising_edge(i_clk)) then
         f_Q <= f_Q_next;    -- next state becomes current state
     end if;
